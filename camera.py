@@ -29,6 +29,7 @@ def create_cube(x, y, z, size):
 def init_cubes():
     global cubes
     cubes.append(create_cube(0, 0, 0, 50))
+    cubes.append(create_cube(0, 75, 0, 50))
 
 
 def translate_for_display(coords):
@@ -80,9 +81,11 @@ pg.display.set_caption("Virtual Camera")
 screen = pg.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
 init_cubes()
 
+clock = pg.time.Clock()
+
 run = True
 while run:
-    # clock.tick(60)
+    clock.tick(60)
 
     # controls
     keys = pg.key.get_pressed()
