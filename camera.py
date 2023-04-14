@@ -1,6 +1,6 @@
-import random
 import pygame as pg
 import numpy as np
+from math import cos, sin, radians
 
 SCREEN_WIDTH, SCREEN_HEIGHT = 1600, 900
 WHITE = (255, 255, 255)
@@ -27,11 +27,56 @@ def translation_matrix(dx, dy, dz):
                      [0, 0, 0, 1]])
 
 
+def rot_mat_x(a):  # tilt
+    a = radians(a)
+    return np.array([[1,      0,       0, 0],
+                     [0, cos(a), -sin(a), 0],
+                     [0, sin(a),  cos(a), 0],
+                     [0,      0,       0, 1]])
+
+
+def rot_mat_y(a):  # pan
+    a = radians(a)
+    return np.array([[cos(a), 0, sin(a), 0],
+                     [0, 1,      0, 0],
+                     [-sin(a), 0, cos(a), 0],
+                     [0, 0,      0,  1]])
+
+
+def rot_mat_z(a):  # roll
+    a = radians(a)
+    return np.array([[cos(a), -sin(a), 0, 0],
+                     [sin(a), cos(a), 0, 0],
+                     [0,      0, 1, 0],
+                     [0,      0, 0, 1]])
+
+
 def translate(dx, dy, dz):
     for cube in cubes:
         for i in range(len(cube)):
             vertex = cube[i]
             cube[i] = tuple(np.matmul(translation_matrix(dx, dy, dz), vertex))
+
+
+def tilt(a):
+    for cube in cubes:
+        for i in range(len(cube)):
+            vertex = cube[i]
+            cube[i] = tuple(np.matmul(rot_mat_x(a), vertex))
+
+
+def pan(a):
+    for cube in cubes:
+        for i in range(len(cube)):
+            vertex = cube[i]
+            cube[i] = tuple(np.matmul(rot_mat_y(a), vertex))
+
+
+def roll(a):
+    for cube in cubes:
+        for i in range(len(cube)):
+            vertex = cube[i]
+            cube[i] = tuple(np.matmul(rot_mat_z(a), vertex))
 
 
 def projection_normalization(vtx):
@@ -143,17 +188,17 @@ while run:
         translate(0, -0.2, 0)
 
     if keys[pg.K_i] == True:  # I -> Tilt Down
-        print("Tilt Down")
+        tilt(0.1)
     if keys[pg.K_k] == True:  # K -> Tilt Up
-        print("Tilt Up")
+        tilt(-0.1)
     if keys[pg.K_j] == True:  # J -> Pan Left
-        print("Pan Left")
+        pan(0.1)
     if keys[pg.K_l] == True:  # L -> Pan Right
-        print("Pan Right")
+        pan(-0.1)
     if keys[pg.K_u] == True:  # U -> Roll Left
-        print("Roll Left")
+        roll(-0.1)
     if keys[pg.K_o] == True:  # O -> Roll Right
-        print("Rol Right")
+        roll(0.1)
 
     if keys[pg.K_w] == True:  # W -> Zoom Out
         print("Zoom out")
