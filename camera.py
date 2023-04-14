@@ -1,5 +1,6 @@
 import random
 import pygame as pg
+import numpy as np
 
 SCREEN_WIDTH, SCREEN_HEIGHT = 1600, 900
 WHITE = (255, 255, 255)
@@ -12,24 +13,18 @@ COLORS = [(245, 194, 231), (203, 166, 247), (243, 139, 168), (250, 179, 135), (2
 cubes = []
 
 
-def create_cube(x, y, z, size):
-    points = []
-    points.append((x, y, z, 1))
-    points.append((x+size, y, z, 1))
-    points.append((x, y+size, z, 1))
-    points.append((x+size, y+size, z, 1))
-
-    points.append((x, y, z+size, 1))
-    points.append((x+size, y, z+size, 1))
-    points.append((x, y+size, z+size, 1))
-    points.append((x+size, y+size, z+size, 1))
-    return points
+def projection_matrix():
+    return np.array([[1, 0, 0, 0],
+                     [0, 1, 0, 0],
+                     [0, 0, 1, 0],
+                     [0, 0, 0.01, 0]])
 
 
-def init_cubes():
-    global cubes
-    cubes.append(create_cube(0, 0, 0, 50))
-    cubes.append(create_cube(0, 75, 0, 50))
+def projection_normalization(vtx):
+    if vtx[3] == 0:
+        print("dzielenie przez 0")
+    return (vtx[0]/vtx[3], vtx[1]/vtx[3], vtx[2]/vtx[3], 1)
+    # return (vtx[0]/1, vtx[1]/1, vtx[2]/1, 1)
 
 
 def translate_for_display(coords):
@@ -47,7 +42,28 @@ def translate_for_display(coords):
 # 0--------1
 
 
-def draw_cube(cube, color):
+def create_cube(x, y, z, size):
+    points = []
+    points.append((x, y, z, 1))
+    points.append((x+size, y, z, 1))
+    points.append((x, y+size, z, 1))
+    points.append((x+size, y+size, z, 1))
+
+    points.append((x, y, z+size, 1))
+    points.append((x+size, y, z+size, 1))
+    points.append((x, y+size, z+size, 1))
+    points.append((x+size, y+size, z+size, 1))
+    return points
+
+
+def init_cubes():
+    cubes.append(create_cube(0, 0, 100, 50))
+    cubes.append(create_cube(0, -75, 100, 50))
+    cubes.append(create_cube(-75, 0, 100, 50))
+    cubes.append(create_cube(-75, -75, 100, 50))
+
+
+def draw_cube_edges(cube, color):
     pg.draw.aaline(screen, color, translate_for_display(
         cube[0]), translate_for_display(cube[1]))
     pg.draw.aaline(screen, color, translate_for_display(
@@ -76,16 +92,25 @@ def draw_cube(cube, color):
         cube[3]), translate_for_display(cube[7]))
 
 
+def draw_cube(cube, color):
+    cube_projection = []
+    for vertex in cube:
+        v_p = np.matmul(projection_matrix(), vertex)
+        v_p = projection_normalization(v_p)
+        cube_projection.append(v_p)
+    draw_cube_edges(cube_projection, color)
+
+
 pg.init()
 pg.display.set_caption("Virtual Camera")
 screen = pg.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
 init_cubes()
 
-clock = pg.time.Clock()
+# clock = pg.time.Clock()
 
 run = True
 while run:
-    clock.tick(60)
+    # clock.tick(60)
 
     # controls
     keys = pg.key.get_pressed()
@@ -124,8 +149,8 @@ while run:
     # draw
     screen.fill(BACKGROUND)
     for i, cube in enumerate(cubes):
-        # draw_cube(cubes[i], random.choice(COLORS)) disco
         draw_cube(cubes[i], COLORS[i % len(COLORS)])
+        # draw_cube(cubes[i], random.choice(COLORS)) disco
 
     for event in pg.event.get():
         if event.type == pg.QUIT:
