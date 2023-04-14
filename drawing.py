@@ -52,9 +52,11 @@ def draw_cube(screen, cube, color, z):
     cube_projection = []
     for vertex in cube:
         visible = True if vertex[2] > 0 else False
+
         v_p = np.matmul(projection_matrix(z), vertex)
         v_p = projection_normalization(v_p)
         v_p[2] = 1 if visible else 0
+
         cube_projection.append(tuple(v_p))
     draw_cube_edges(screen, cube_projection, color)
 

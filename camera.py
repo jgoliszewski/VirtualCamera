@@ -1,11 +1,10 @@
 import pygame as pg
 import numpy as np
 
-from matrices import *
 from drawing import *
 
-# SCREEN_WIDTH, SCREEN_HEIGHT = 1600, 900
-SCREEN_WIDTH, SCREEN_HEIGHT = 1080, 1080
+SCREEN_WIDTH, SCREEN_HEIGHT = 1600, 900
+# SCREEN_WIDTH, SCREEN_HEIGHT = 1080, 1080
 
 
 # Catppuccin Mocha colorscheme
