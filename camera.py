@@ -20,6 +20,20 @@ def projection_matrix():
                      [0, 0, 0.01, 0]])
 
 
+def translation_matrix(dx, dy, dz):
+    return np.array([[1, 0, 0, dx],
+                     [0, 1, 0, dy],
+                     [0, 0, 1, dz],
+                     [0, 0, 0, 1]])
+
+
+def translate(dx, dy, dz):
+    for cube in cubes:
+        for i in range(len(cube)):
+            vertex = cube[i]
+            cube[i] = tuple(np.matmul(translation_matrix(dx, dy, dz), vertex))
+
+
 def projection_normalization(vtx):
     if vtx[3] == 0:
         print("dzielenie przez 0")
@@ -116,17 +130,17 @@ while run:
     keys = pg.key.get_pressed()
 
     if keys[pg.K_e] == True:  # E -> Move Forward
-        print("Move Forward")
+        translate(0, 0, -0.2)
     if keys[pg.K_d] == True:  # D -> Move Back
-        print("Move Back")
+        translate(0, 0, 0.2)
     if keys[pg.K_s] == True:  # S -> Move Left
-        print("Move Left")
+        translate(0.2, 0, 0)
     if keys[pg.K_f] == True:  # F -> Move Right
-        print("Move Right")
-    if keys[pg.K_t] == True:  # R -> Move Up
-        print("Move Up")
-    if keys[pg.K_g] == True:  # W -> Move Down
-        print("Move Down")
+        translate(-0.2, 0, 0)
+    if keys[pg.K_g] == True:  # G -> Move Down
+        translate(0, 0.2, 0)
+    if keys[pg.K_t] == True:  # T -> Move Up
+        translate(0, -0.2, 0)
 
     if keys[pg.K_i] == True:  # I -> Tilt Down
         print("Tilt Down")
