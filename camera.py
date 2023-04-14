@@ -13,11 +13,11 @@ COLORS = [(166, 227, 161), (245, 194, 231), (116, 199, 236), (249, 226, 175), (1
 cubes = []
 
 
-def projection_matrix():
+def projection_matrix(z):
     return np.array([[1, 0, 0, 0],
                      [0, 1, 0, 0],
                      [0, 0, 1, 0],
-                     [0, 0, 0.01, 0]])
+                     [0, 0, 1/z, 0]])
 
 
 def translation_matrix(dx, dy, dz):
@@ -120,10 +120,10 @@ def init_cubes():
     cubes.append(create_cube(0, -75, 100, 50))
     cubes.append(create_cube(-75, 0, 100, 50))
     cubes.append(create_cube(-75, -75, 100, 50))
-    cubes.append(create_cube(0, 0, 25, 50))
-    cubes.append(create_cube(0, -75, 25, 50))
-    cubes.append(create_cube(-75, 0, 25, 50))
-    cubes.append(create_cube(-75, -75, 25, 50))
+    cubes.append(create_cube(0, 0, 175, 50))
+    cubes.append(create_cube(0, -75, 175, 50))
+    cubes.append(create_cube(-75, 0, 175, 50))
+    cubes.append(create_cube(-75, -75, 175, 50))
 
 
 def draw_cube_edges(cube, color):
@@ -158,7 +158,7 @@ def draw_cube_edges(cube, color):
 def draw_cube(cube, color):
     cube_projection = []
     for vertex in cube:
-        v_p = np.matmul(projection_matrix(), vertex)
+        v_p = np.matmul(projection_matrix(z), vertex)
         v_p = projection_normalization(v_p)
         cube_projection.append(v_p)
     draw_cube_edges(cube_projection, color)
@@ -170,6 +170,8 @@ screen = pg.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
 init_cubes()
 
 # clock = pg.time.Clock()
+z = 200
+font = pg.font.SysFont("Arial", 36)
 
 run = True
 while run:
@@ -205,15 +207,20 @@ while run:
         roll(0.1)
 
     if keys[pg.K_w] == True:  # W -> Zoom Out
-        print("Zoom out")
+        if z > 100:
+            z -= 0.5
     if keys[pg.K_r] == True:  # R -> Zoom In
-        print("Zoom in")
+        if z < 400:
+            z += 0.5
 
     # draw
     screen.fill(BACKGROUND)
     for i, cube in enumerate(cubes):
         draw_cube(cubes[i], COLORS[i % len(COLORS)])
         # draw_cube(cubes[i], random.choice(COLORS)) disco
+
+    zoom = font.render(f"Zoom: {round(z/200*100, 1)}%", True, COLORS[0])
+    screen.blit(zoom, (10, 10))
 
     for event in pg.event.get():
         if event.type == pg.QUIT:
