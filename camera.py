@@ -8,8 +8,8 @@ BLACK = (0, 0, 0)
 
 # Catppuccin Mocha colorscheme
 BACKGROUND = (18, 18, 25)
-COLORS = [(245, 194, 231), (203, 166, 247), (243, 139, 168), (250, 179, 135), (249, 226, 175),
-          (166, 227, 161), (137, 220, 235), (116, 199, 236), (137, 180, 250), (180, 190, 254)]
+COLORS = [(166, 227, 161), (245, 194, 231), (116, 199, 236), (249, 226, 175), (180, 190, 254),
+          (137, 220, 235), (203, 166, 247), (243, 139, 168), (250, 179, 135), (137, 180, 250)]
 cubes = []
 
 
@@ -120,6 +120,10 @@ def init_cubes():
     cubes.append(create_cube(0, -75, 100, 50))
     cubes.append(create_cube(-75, 0, 100, 50))
     cubes.append(create_cube(-75, -75, 100, 50))
+    cubes.append(create_cube(0, 0, 25, 50))
+    cubes.append(create_cube(0, -75, 25, 50))
+    cubes.append(create_cube(-75, 0, 25, 50))
+    cubes.append(create_cube(-75, -75, 25, 50))
 
 
 def draw_cube_edges(cube, color):
