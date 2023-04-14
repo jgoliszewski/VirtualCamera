@@ -82,7 +82,7 @@ def roll(a):
 def projection_normalization(vtx):
     if vtx[3] == 0:
         print("dzielenie przez 0")
-    return (vtx[0]/vtx[3], vtx[1]/vtx[3], vtx[2]/vtx[3], 1)
+    return [vtx[0]/vtx[3], vtx[1]/vtx[3], vtx[2]/vtx[3], 1]
     # return (vtx[0]/1, vtx[1]/1, vtx[2]/1, 1)
 
 
@@ -127,40 +127,54 @@ def init_cubes():
 
 
 def draw_cube_edges(cube, color):
-    pg.draw.aaline(screen, color, translate_for_display(
-        cube[0]), translate_for_display(cube[1]))
-    pg.draw.aaline(screen, color, translate_for_display(
-        cube[0]), translate_for_display(cube[2]))
-    pg.draw.aaline(screen, color, translate_for_display(
-        cube[1]), translate_for_display(cube[3]))
-    pg.draw.aaline(screen, color, translate_for_display(
-        cube[2]), translate_for_display(cube[3]))
+    if (cube[0][2] > 0 and cube[1][2] > 0):
+        pg.draw.aaline(screen, color, translate_for_display(
+            cube[0]), translate_for_display(cube[1]))
+    if (cube[0][2] > 0 and cube[2][2] > 0):
+        pg.draw.aaline(screen, color, translate_for_display(
+            cube[0]), translate_for_display(cube[2]))
+    if (cube[1][2] > 0 and cube[3][2] > 0):
+        pg.draw.aaline(screen, color, translate_for_display(
+            cube[1]), translate_for_display(cube[3]))
+    if (cube[2][2] > 0 and cube[3][2] > 0):
+        pg.draw.aaline(screen, color, translate_for_display(
+            cube[2]), translate_for_display(cube[3]))
 
-    pg.draw.aaline(screen, color, translate_for_display(
-        cube[4]), translate_for_display(cube[5]))
-    pg.draw.aaline(screen, color, translate_for_display(
-        cube[4]), translate_for_display(cube[6]))
-    pg.draw.aaline(screen, color, translate_for_display(
-        cube[5]), translate_for_display(cube[7]))
-    pg.draw.aaline(screen, color, translate_for_display(
-        cube[6]), translate_for_display(cube[7]))
+    if (cube[4][2] > 0 and cube[5][2] > 0):
+        pg.draw.aaline(screen, color, translate_for_display(
+            cube[4]), translate_for_display(cube[5]))
+    if (cube[4][2] > 0 and cube[6][2] > 0):
+        pg.draw.aaline(screen, color, translate_for_display(
+            cube[4]), translate_for_display(cube[6]))
+    if (cube[5][2] > 0 and cube[7][2] > 0):
+        pg.draw.aaline(screen, color, translate_for_display(
+            cube[5]), translate_for_display(cube[7]))
+    if (cube[6][2] > 0 and cube[7][2] > 0):
+        pg.draw.aaline(screen, color, translate_for_display(
+            cube[6]), translate_for_display(cube[7]))
 
-    pg.draw.aaline(screen, color, translate_for_display(
-        cube[0]), translate_for_display(cube[4]))
-    pg.draw.aaline(screen, color, translate_for_display(
-        cube[1]), translate_for_display(cube[5]))
-    pg.draw.aaline(screen, color, translate_for_display(
-        cube[2]), translate_for_display(cube[6]))
-    pg.draw.aaline(screen, color, translate_for_display(
-        cube[3]), translate_for_display(cube[7]))
+    if (cube[0][2] > 0 and cube[4][2] > 0):
+        pg.draw.aaline(screen, color, translate_for_display(
+            cube[0]), translate_for_display(cube[4]))
+    if (cube[1][2] > 0 and cube[5][2] > 0):
+        pg.draw.aaline(screen, color, translate_for_display(
+            cube[1]), translate_for_display(cube[5]))
+    if (cube[2][2] > 0 and cube[6][2] > 0):
+        pg.draw.aaline(screen, color, translate_for_display(
+            cube[2]), translate_for_display(cube[6]))
+    if (cube[3][2] > 0 and cube[7][2] > 0):
+        pg.draw.aaline(screen, color, translate_for_display(
+            cube[3]), translate_for_display(cube[7]))
 
 
 def draw_cube(cube, color):
     cube_projection = []
     for vertex in cube:
+        visible = True if vertex[2] > 0 else False
         v_p = np.matmul(projection_matrix(z), vertex)
         v_p = projection_normalization(v_p)
-        cube_projection.append(v_p)
+        v_p[2] = 1 if visible else 0
+        cube_projection.append(tuple(v_p))
     draw_cube_edges(cube_projection, color)
 
 
@@ -219,7 +233,7 @@ while run:
         draw_cube(cubes[i], COLORS[i % len(COLORS)])
         # draw_cube(cubes[i], random.choice(COLORS)) disco
 
-    zoom = font.render(f"Zoom: {round(z/200*100, 1)}%", True, COLORS[0])
+    zoom = font.render(f"Zoom: {round(z/200*100, 1)}%", True, COLORS[4])
     screen.blit(zoom, (10, 10))
 
     for event in pg.event.get():
