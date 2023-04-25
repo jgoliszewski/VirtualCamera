@@ -1,15 +1,3 @@
 # VirtualCamera in Python using PyGame
 
 ## Controls
-
-| &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; | &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; | &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; | &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; | &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; | &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; | &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; | &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; | &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; | &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; |
-| :-----------------------------------------------------: | :-----------------------------------------------------: | :-----------------------------------------------------: | :-----------------------------------------------------: | :-----------------------------------------------------: | :-----------------------------------------------------: | :-----------------------------------------------------: | :-----------------------------------------------------: | :-----------------------------------------------------: | :-----------------------------------------------------: |
-|                            Q                            |          $${\color{pink}{Zoom \ out}}$$ <br> W          |        $${\color{lightgreen}{Forward}}$$ <br> E         |          $${\color{pink}{Zoom \ in}}$$ <br> R           |           $${\color{lightblue}{Up}}$$ <br> T            |                            Y                            |          $${\color{pink}{Roll \ CCW}}$$ <br> U          |       $${\color{lightgreen}{Tilt \ Up}}$$ <br> I        |          $${\color{pink}{Roll \ CW}}$$ <br> O           |                            P                            |
-|                            A                            |          $${\color{lightgreen}{Left}}$$ <br> S          |          $${\color{lightgreen}{Back}}$$ <br> D          |         $${\color{lightgreen}{Right}}$$ <br> F          |          $${\color{lightblue}{Down}}$$ <br> G           |                            H                            |        $${\color{lightgreen}{Pan \ L.}}$$ <br> J        |      $${\color{lightgreen}{Tilt \ Down}}$$ <br> K       |        $${\color{lightgreen}{Pan \ R.}}$$ <br> L        |                            ;                            |
-|                            Z                            |                            X                            |                            C                            |                            V                            |                            B                            |                            N                            |                            M                            |                            ,                            |                            .                            |                            /                            |
-
-<style>
-    table {
-        width: 100%;
-    }
-</style>
