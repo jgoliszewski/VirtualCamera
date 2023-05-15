@@ -1,6 +1,7 @@
 import pygame as pg
 from matrices import *
-
+COLORS = [(166, 227, 161), (245, 194, 231), (116, 199, 236), (249, 226, 175), (180, 190, 254),
+          (137, 220, 235), (203, 166, 247), (243, 139, 168), (250, 179, 135), (137, 180, 250)]
 # Cube Vertices
 #    6--------7
 #   /|       /|
@@ -16,6 +17,25 @@ cubes = []
 screen_width = 0
 screen_height = 0
 
+class Vertex:
+    def __init__(self, x, y, z, w):
+        self.x = x
+        self.y = y
+        self.z = z
+        self.w = w
+    
+    def get_tuple(self):
+        return (self.x, self.y, self.z, self.w)
+
+class Cube:
+    def __init__(self, vertecies, color):
+        self.vertecies = vertecies
+        self.color = color
+
+class Wall:
+    def __init__(self, vertecies, color):
+        self.vertecies = vertecies
+        self.color = color
 
 def init_screen(w, h):
     global screen_width, screen_height
@@ -24,115 +44,99 @@ def init_screen(w, h):
 
 
 def init_cubes():
-    cubes.append(create_cube(0, 0, 100, 50))
-    cubes.append(create_cube(0, -75, 100, 50))
-    cubes.append(create_cube(-75, 0, 100, 50))
-    cubes.append(create_cube(-75, -75, 100, 50))
-    cubes.append(create_cube(0, 0, 175, 50))
-    cubes.append(create_cube(0, -75, 175, 50))
-    cubes.append(create_cube(-75, 0, 175, 50))
-    cubes.append(create_cube(-75, -75, 175, 50))
+    cubes.append(create_cube(0, 0, 100, 50, COLORS[0]))
+    cubes.append(create_cube(0, -75, 100, 50, COLORS[1]))
+    cubes.append(create_cube(-75, 0, 100, 50, COLORS[2]))
+    cubes.append(create_cube(-75, -75, 100, 50, COLORS[3]))
+    cubes.append(create_cube(0, 0, 175, 50, COLORS[4]))
+    cubes.append(create_cube(0, -75, 175, 50, COLORS[5]))
+    cubes.append(create_cube(-75, 0, 175, 50, COLORS[6]))
+    cubes.append(create_cube(-75, -75, 175, 50, COLORS[7]))
 
 
-def create_cube(x, y, z, size):
-    points = []
-    points.append((x, y, z, 1))
-    points.append((x+size, y, z, 1))
-    points.append((x, y+size, z, 1))
-    points.append((x+size, y+size, z, 1))
+def create_cube(x, y, z, size, color):
+  
+    vertices = []
+    vertices.append(Vertex(x, y, z, 1))
+    vertices.append(Vertex(x+size, y, z, 1))
+    vertices.append(Vertex(x, y+size, z, 1))
+    vertices.append(Vertex(x+size, y+size, z, 1))
 
-    points.append((x, y, z+size, 1))
-    points.append((x+size, y, z+size, 1))
-    points.append((x, y+size, z+size, 1))
-    points.append((x+size, y+size, z+size, 1))
-    return points
+    vertices.append(Vertex(x, y, z+size, 1))
+    vertices.append(Vertex(x+size, y, z+size, 1))
+    vertices.append(Vertex(x, y+size, z+size, 1))
+    vertices.append(Vertex(x+size, y+size, z+size, 1))
+    
+    return Cube(vertices, color)
 
+def draw_cubes(screen, cubes, z):
+    walls = []
+    for cube in cubes:
+        draw_cube(screen, cube, z)
 
-def draw_cube(screen, cube, color, z):
-    cube_projection = []
-    for vertex in cube:
-        visible = True if vertex[2] > 0 else False
+def draw_cube(screen, cube, z):
+    cube_projection_vertecies = []
+    for vertex in cube.vertecies:
+        visible = True if vertex.z > 0 else False
 
-        v_p = np.matmul(projection_matrix(z), vertex)
+        v_p = np.matmul(projection_matrix(z), vertex.get_tuple())
         v_p = projection_normalization(v_p)
         v_p[2] = 1 if visible else 0
 
-        cube_projection.append(tuple(v_p))
-    draw_cube_edges(screen, cube_projection, color)
+        cube_projection_vertecies.append(tuple(v_p))
+    cube_projection = Cube(cube_projection_vertecies, cube.color)
+    cube_walls = cube_2_walls(cube_projection)
+    for wall in cube_walls:
+        draw_wall(screen, wall)
 
+def cube_2_walls(cube):
+    walls = []
+    walls.append(Wall([cube.vertecies[0], cube.vertecies[1], cube.vertecies[3], cube.vertecies[2]], cube.color))
+    walls.append(Wall([cube.vertecies[0], cube.vertecies[1], cube.vertecies[5], cube.vertecies[4]], cube.color))
+    walls.append(Wall([cube.vertecies[0], cube.vertecies[2], cube.vertecies[6], cube.vertecies[4]], cube.color))
+    walls.append(Wall([cube.vertecies[1], cube.vertecies[3], cube.vertecies[7], cube.vertecies[5]], cube.color))
+    walls.append(Wall([cube.vertecies[2], cube.vertecies[3], cube.vertecies[7], cube.vertecies[6]], cube.color))
+    walls.append(Wall([cube.vertecies[4], cube.vertecies[5], cube.vertecies[7], cube.vertecies[6]], cube.color))
+    return walls
 
-def draw_cube_edges(screen, cube, color):
-    if (cube[0][2] > 0 and cube[1][2] > 0):
-        pg.draw.aaline(screen, color, translate_for_display(
-            cube[0]), translate_for_display(cube[1]))
-    if (cube[0][2] > 0 and cube[2][2] > 0):
-        pg.draw.aaline(screen, color, translate_for_display(
-            cube[0]), translate_for_display(cube[2]))
-    if (cube[1][2] > 0 and cube[3][2] > 0):
-        pg.draw.aaline(screen, color, translate_for_display(
-            cube[1]), translate_for_display(cube[3]))
-    if (cube[2][2] > 0 and cube[3][2] > 0):
-        pg.draw.aaline(screen, color, translate_for_display(
-            cube[2]), translate_for_display(cube[3]))
-
-    if (cube[4][2] > 0 and cube[5][2] > 0):
-        pg.draw.aaline(screen, color, translate_for_display(
-            cube[4]), translate_for_display(cube[5]))
-    if (cube[4][2] > 0 and cube[6][2] > 0):
-        pg.draw.aaline(screen, color, translate_for_display(
-            cube[4]), translate_for_display(cube[6]))
-    if (cube[5][2] > 0 and cube[7][2] > 0):
-        pg.draw.aaline(screen, color, translate_for_display(
-            cube[5]), translate_for_display(cube[7]))
-    if (cube[6][2] > 0 and cube[7][2] > 0):
-        pg.draw.aaline(screen, color, translate_for_display(
-            cube[6]), translate_for_display(cube[7]))
-
-    if (cube[0][2] > 0 and cube[4][2] > 0):
-        pg.draw.aaline(screen, color, translate_for_display(
-            cube[0]), translate_for_display(cube[4]))
-    if (cube[1][2] > 0 and cube[5][2] > 0):
-        pg.draw.aaline(screen, color, translate_for_display(
-            cube[1]), translate_for_display(cube[5]))
-    if (cube[2][2] > 0 and cube[6][2] > 0):
-        pg.draw.aaline(screen, color, translate_for_display(
-            cube[2]), translate_for_display(cube[6]))
-    if (cube[3][2] > 0 and cube[7][2] > 0):
-        pg.draw.aaline(screen, color, translate_for_display(
-            cube[3]), translate_for_display(cube[7]))
-
+def draw_wall(screen, wall):
+    pg.draw.polygon(screen, wall.color, [translate_for_display(wall.vertecies[0]), translate_for_display(wall.vertecies[1]), translate_for_display(wall.vertecies[2]), translate_for_display(wall.vertecies[3])])
+    pg.draw.aaline(screen, (255,255,255), translate_for_display(wall.vertecies[0]), translate_for_display(wall.vertecies[1]))
+    pg.draw.aaline(screen, (255,255,255), translate_for_display(wall.vertecies[1]), translate_for_display(wall.vertecies[2]))
+    pg.draw.aaline(screen, (255,255,255), translate_for_display(wall.vertecies[2]), translate_for_display(wall.vertecies[3]))
+    pg.draw.aaline(screen, (255,255,255), translate_for_display(wall.vertecies[3]), translate_for_display(wall.vertecies[0]))
 
 def projection_normalization(vtx):
     return [vtx[0]/vtx[3], vtx[1]/vtx[3], vtx[2]/vtx[3], 1]
 
 
-def translate_for_display(coords):
-    return (screen_width/2 + coords[0], screen_height/2 - coords[1])
+def translate_for_display(vertex):
+    return (screen_width/2 + vertex[0], screen_height/2 - vertex[1])
 
 
 def translate(dx, dy, dz):
     for cube in cubes:
-        for i in range(len(cube)):
-            vertex = cube[i]
-            cube[i] = tuple(np.matmul(translation_matrix(dx, dy, dz), vertex))
+        for i, vertex in enumerate(cube.vertecies):
+            vert = tuple(np.matmul(translation_matrix(dx, dy, dz), vertex.get_tuple()))
+            cube.vertecies[i] = Vertex(vert[0], vert[1], vert[2], vert[3])
 
 
 def tilt(a):
     for cube in cubes:
-        for i in range(len(cube)):
-            vertex = cube[i]
-            cube[i] = tuple(np.matmul(rot_mat_x(a), vertex))
+        for i, vertex in enumerate(cube.vertecies):
+            vert = tuple(np.matmul(rot_mat_x(a), vertex.get_tuple()))
+            cube.vertecies[i] = Vertex(vert[0], vert[1], vert[2], vert[3])
 
 
 def pan(a):
     for cube in cubes:
-        for i in range(len(cube)):
-            vertex = cube[i]
-            cube[i] = tuple(np.matmul(rot_mat_y(a), vertex))
+        for i, vertex in enumerate(cube.vertecies):
+            vert = tuple(np.matmul(rot_mat_y(a), vertex.get_tuple()))
+            cube.vertecies[i] = Vertex(vert[0], vert[1], vert[2], vert[3])
 
 
 def roll(a):
     for cube in cubes:
-        for i in range(len(cube)):
-            vertex = cube[i]
-            cube[i] = tuple(np.matmul(rot_mat_z(a), vertex))
+        for i, vertex in enumerate(cube.vertecies):
+            vert = tuple(np.matmul(rot_mat_z(a), vertex.get_tuple()))
+            cube.vertecies[i] = Vertex(vert[0], vert[1], vert[2], vert[3])
