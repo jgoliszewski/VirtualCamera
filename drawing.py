@@ -75,33 +75,32 @@ def create_cube(x, y, z, size, color):
 def draw_cubes(screen, cubes, z):
     walls = []
     for cube in cubes:
-        for wall in project_cube_2_walls(cube, z):
+        for wall in cube_2_walls(cube):
             walls.append(wall)
 
     # sort walls here 
     sorted_walls = sort_walls(walls)
 
-
     for wall in sorted_walls:
-        draw_wall(screen, wall)
+        projected_wall = project_wall(wall, z)
+        draw_wall(screen, projected_wall)
 
 def sort_walls(walls):
     return sorted(walls, key=lambda wall: wall.get_CofG(), reverse=True)
 
-def project_cube_2_walls(cube, z):
-    cube_projection_vertecies = []
-    for vertex in cube.vertecies:
+def project_wall(wall, z):
+    wall_projection_vertecies = []
+    for vertex in wall.vertecies:
         visible = True if vertex.z > 0 else False
 
         v_p = np.matmul(projection_matrix(z), vertex.get_tuple())
         v_p = projection_normalization(v_p)
         v_p[2] = 1 if visible else 0
 
-        cube_projection_vertecies.append(Vertex(v_p[0], v_p[1], v_p[2], v_p[3]))
+        wall_projection_vertecies.append(Vertex(v_p[0], v_p[1], v_p[2], v_p[3]))
 
-    cube_projection = Cube(cube_projection_vertecies, cube.color)
-    cube_walls = cube_2_walls(cube_projection)
-    return cube_walls
+    wall_projection = Wall(wall_projection_vertecies, wall.color)
+    return wall_projection
 
 def cube_2_walls(cube):
     walls = []
@@ -111,7 +110,6 @@ def cube_2_walls(cube):
     walls.append(Wall([cube.vertecies[1], cube.vertecies[3], cube.vertecies[7], cube.vertecies[5]], cube.color))
     walls.append(Wall([cube.vertecies[2], cube.vertecies[3], cube.vertecies[7], cube.vertecies[6]], cube.color))
     walls.append(Wall([cube.vertecies[4], cube.vertecies[5], cube.vertecies[7], cube.vertecies[6]], cube.color))
-
 
     return walls
 
