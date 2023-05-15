@@ -36,6 +36,9 @@ class Wall:
     def __init__(self, vertecies, color):
         self.vertecies = vertecies
         self.color = color
+    
+    def get_CofG(self):
+        return (self.vertecies[0].z + self.vertecies[1].z + self.vertecies[2].z + self.vertecies[3].z) / 4
 
 def init_screen(w, h):
     global screen_width, screen_height
@@ -44,7 +47,7 @@ def init_screen(w, h):
 
 
 def init_cubes():
-    cubes.append(create_cube(0, 0, 100, 50, COLORS[0]))
+    cubes.append(create_cube(0, 0, 100, 50 , COLORS[0]))
     cubes.append(create_cube(0, -75, 100, 50, COLORS[1]))
     cubes.append(create_cube(-75, 0, 100, 50, COLORS[2]))
     cubes.append(create_cube(-75, -75, 100, 50, COLORS[3]))
@@ -72,9 +75,20 @@ def create_cube(x, y, z, size, color):
 def draw_cubes(screen, cubes, z):
     walls = []
     for cube in cubes:
-        draw_cube(screen, cube, z)
+        for wall in project_cube_2_walls(cube, z):
+            walls.append(wall)
 
-def draw_cube(screen, cube, z):
+    # sort walls here 
+    sorted_walls = sort_walls(walls)
+
+
+    for wall in sorted_walls:
+        draw_wall(screen, wall)
+
+def sort_walls(walls):
+    return sorted(walls, key=lambda wall: wall.get_CofG(), reverse=True)
+
+def project_cube_2_walls(cube, z):
     cube_projection_vertecies = []
     for vertex in cube.vertecies:
         visible = True if vertex.z > 0 else False
@@ -83,11 +97,11 @@ def draw_cube(screen, cube, z):
         v_p = projection_normalization(v_p)
         v_p[2] = 1 if visible else 0
 
-        cube_projection_vertecies.append(tuple(v_p))
+        cube_projection_vertecies.append(Vertex(v_p[0], v_p[1], v_p[2], v_p[3]))
+
     cube_projection = Cube(cube_projection_vertecies, cube.color)
     cube_walls = cube_2_walls(cube_projection)
-    for wall in cube_walls:
-        draw_wall(screen, wall)
+    return cube_walls
 
 def cube_2_walls(cube):
     walls = []
@@ -97,6 +111,8 @@ def cube_2_walls(cube):
     walls.append(Wall([cube.vertecies[1], cube.vertecies[3], cube.vertecies[7], cube.vertecies[5]], cube.color))
     walls.append(Wall([cube.vertecies[2], cube.vertecies[3], cube.vertecies[7], cube.vertecies[6]], cube.color))
     walls.append(Wall([cube.vertecies[4], cube.vertecies[5], cube.vertecies[7], cube.vertecies[6]], cube.color))
+
+
     return walls
 
 def draw_wall(screen, wall):
@@ -111,7 +127,7 @@ def projection_normalization(vtx):
 
 
 def translate_for_display(vertex):
-    return (screen_width/2 + vertex[0], screen_height/2 - vertex[1])
+    return (screen_width/2 + vertex.x, screen_height/2 - vertex.y)
 
 
 def translate(dx, dy, dz):
