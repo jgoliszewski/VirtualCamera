@@ -2,6 +2,7 @@ import pygame as pg
 import numpy as np
 
 from drawing import *
+import drawing as d
 
 SCREEN_WIDTH, SCREEN_HEIGHT = 1600, 900
 # SCREEN_WIDTH, SCREEN_HEIGHT = 1080, 1080
@@ -23,6 +24,7 @@ font = pg.font.SysFont("Arial", 30)
 
 # clock = pg.time.Clock()
 run = True
+cooldown = 60
 while run:
     # clock.tick(60)
 
@@ -62,12 +64,19 @@ while run:
         if z < 400:
             z += 0.5
 
+    if keys[pg.K_m] == True and cooldown == 0:
+        change_mode()
+        cooldown = 60
+    if cooldown > 0:
+        cooldown -= 1
     #! draw
     screen.fill(BACKGROUND)
     draw_cubes(screen, cubes, z);
 
     zoom = font.render(f"Zoom: {round(z/200*100, 1)}%", True, COLORS[4])
     screen.blit(zoom, (10, 10))
+    mode = font.render(f"Fill walls: {d.mode}", True, COLORS[4])
+    screen.blit(mode, (10, 50))
 
     for event in pg.event.get():
         if event.type == pg.QUIT:

@@ -1,5 +1,6 @@
 import pygame as pg
 from matrices import *
+from objects import *
 COLORS = [(166, 227, 161), (245, 194, 231), (116, 199, 236), (249, 226, 175), (180, 190, 254),
           (137, 220, 235), (203, 166, 247), (243, 139, 168), (250, 179, 135), (137, 180, 250)]
 # Cube Vertices
@@ -16,35 +17,16 @@ COLORS = [(166, 227, 161), (245, 194, 231), (116, 199, 236), (249, 226, 175), (1
 cubes = []
 screen_width = 0
 screen_height = 0
-
-class Vertex:
-    def __init__(self, x, y, z, w):
-        self.x = x
-        self.y = y
-        self.z = z
-        self.w = w
-    
-    def get_tuple(self):
-        return (self.x, self.y, self.z, self.w)
-
-class Cube:
-    def __init__(self, vertecies, color):
-        self.vertecies = vertecies
-        self.color = color
-
-class Wall:
-    def __init__(self, vertecies, color):
-        self.vertecies = vertecies
-        self.color = color
-    
-    def get_CofG(self):
-        return (self.vertecies[0].z + self.vertecies[1].z + self.vertecies[2].z + self.vertecies[3].z) / 4
+mode = False
 
 def init_screen(w, h):
     global screen_width, screen_height
     screen_width = w
     screen_height = h
 
+def change_mode():
+    global mode
+    mode = not mode
 
 def init_cubes():
     cubes.append(create_cube(0, 0, 100, 50 , COLORS[0]))
@@ -56,9 +38,7 @@ def init_cubes():
     cubes.append(create_cube(-75, 0, 175, 50, COLORS[6]))
     cubes.append(create_cube(-75, -75, 175, 50, COLORS[7]))
 
-
 def create_cube(x, y, z, size, color):
-  
     vertices = []
     vertices.append(Vertex(x, y, z, 1))
     vertices.append(Vertex(x+size, y, z, 1))
@@ -78,7 +58,6 @@ def draw_cubes(screen, cubes, z):
         for wall in cube_2_walls(cube):
             walls.append(wall)
 
-    # sort walls here 
     sorted_walls = sort_walls(walls)
 
     for wall in sorted_walls:
@@ -114,11 +93,17 @@ def cube_2_walls(cube):
     return walls
 
 def draw_wall(screen, wall):
-    pg.draw.polygon(screen, wall.color, [translate_for_display(wall.vertecies[0]), translate_for_display(wall.vertecies[1]), translate_for_display(wall.vertecies[2]), translate_for_display(wall.vertecies[3])])
-    pg.draw.aaline(screen, (255,255,255), translate_for_display(wall.vertecies[0]), translate_for_display(wall.vertecies[1]))
-    pg.draw.aaline(screen, (255,255,255), translate_for_display(wall.vertecies[1]), translate_for_display(wall.vertecies[2]))
-    pg.draw.aaline(screen, (255,255,255), translate_for_display(wall.vertecies[2]), translate_for_display(wall.vertecies[3]))
-    pg.draw.aaline(screen, (255,255,255), translate_for_display(wall.vertecies[3]), translate_for_display(wall.vertecies[0]))
+    if mode:
+        pg.draw.polygon(screen, wall.color, [translate_for_display(wall.vertecies[0]), translate_for_display(wall.vertecies[1]), translate_for_display(wall.vertecies[2]), translate_for_display(wall.vertecies[3])])
+        pg.draw.aaline(screen, (255,255,255), translate_for_display(wall.vertecies[0]), translate_for_display(wall.vertecies[1]))
+        pg.draw.aaline(screen, (255,255,255), translate_for_display(wall.vertecies[1]), translate_for_display(wall.vertecies[2]))
+        pg.draw.aaline(screen, (255,255,255), translate_for_display(wall.vertecies[2]), translate_for_display(wall.vertecies[3]))
+        pg.draw.aaline(screen, (255,255,255), translate_for_display(wall.vertecies[3]), translate_for_display(wall.vertecies[0]))
+    else:
+        pg.draw.aaline(screen, wall.color, translate_for_display(wall.vertecies[0]), translate_for_display(wall.vertecies[1]))
+        pg.draw.aaline(screen, wall.color, translate_for_display(wall.vertecies[1]), translate_for_display(wall.vertecies[2]))
+        pg.draw.aaline(screen, wall.color, translate_for_display(wall.vertecies[2]), translate_for_display(wall.vertecies[3]))
+        pg.draw.aaline(screen, wall.color, translate_for_display(wall.vertecies[3]), translate_for_display(wall.vertecies[0]))
 
 def projection_normalization(vtx):
     return [vtx[0]/vtx[3], vtx[1]/vtx[3], vtx[2]/vtx[3], 1]
