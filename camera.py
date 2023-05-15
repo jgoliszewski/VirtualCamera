@@ -19,7 +19,7 @@ screen = pg.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
 init_screen(SCREEN_WIDTH, SCREEN_HEIGHT)
 init_cubes()
 
-z = 1000
+z = 1200
 font = pg.font.SysFont("Arial", 30)
 
 # clock = pg.time.Clock()
@@ -58,11 +58,11 @@ while run:
         roll(0.5)
 
     if keys[pg.K_w] == True:  # W -> Zoom Out
-        if z > 100:
-            z -= 2
+        if z > 1000:
+            z -= 10
     if keys[pg.K_r] == True:  # R -> Zoom In
-        if z < 400:
-            z += 2
+        if z < 1800:
+            z += 10
 
     if keys[pg.K_m] == True and cooldown == 0:
         change_mode()
@@ -73,7 +73,7 @@ while run:
     screen.fill(BACKGROUND)
     draw_cubes(screen, cubes, z);
 
-    zoom = font.render(f"Zoom: {round(z/200*100, 1)}%", True, COLORS[4])
+    zoom = font.render(f"Zoom: {round(z/1800*100, 1)}%", True, COLORS[4])
     screen.blit(zoom, (10, 10))
     mode = font.render(f"Fill walls: {d.mode}", True, COLORS[4])
     screen.blit(mode, (10, 50))
