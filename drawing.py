@@ -54,11 +54,16 @@ def create_cube(x, y, z, size, color):
 
 def draw_cubes(screen, cubes, z):
     walls = []
-    for cube in cubes:
+    
+    for cube in sorted(cubes, key=lambda cube: cube.get_CofG(), reverse=True):
+        walls_temp = []
         for wall in cube_2_walls(cube):
+            walls_temp.append(wall)
+        sort_walls(walls_temp)
+        
+        for wall in walls_temp:
             walls.append(wall)
 
-    sort_walls(walls)
 
     for wall in walls:
         projected_wall = project_wall(wall, z)
@@ -69,7 +74,7 @@ def sort_walls(walls):
         for j in range(len(walls)):
             if walls[i] >= walls[j]:
                 walls[i], walls[j] = walls[j], walls[i]
-                
+
 
 def project_wall(wall, z):
     wall_projection_vertecies = []

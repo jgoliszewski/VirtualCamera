@@ -19,7 +19,7 @@ screen = pg.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
 init_screen(SCREEN_WIDTH, SCREEN_HEIGHT)
 init_cubes()
 
-z = 400
+z = 1000
 font = pg.font.SysFont("Arial", 30)
 
 # clock = pg.time.Clock()
@@ -32,37 +32,37 @@ while run:
     keys = pg.key.get_pressed()
 
     if keys[pg.K_e] == True:  # E -> Move Forward
-        translate(0, 0, -0.5)
+        translate(0, 0, -2)
     if keys[pg.K_d] == True:  # D -> Move Back
-        translate(0, 0, 0.5)
+        translate(0, 0, 2)
     if keys[pg.K_s] == True:  # S -> Move Left
-        translate(0.5, 0, 0)
+        translate(2, 0, 0)
     if keys[pg.K_f] == True:  # F -> Move Right
-        translate(-0.5, 0, 0)
+        translate(-2, 0, 0)
     if keys[pg.K_g] == True:  # G -> Move Down
-        translate(0, 0.5, 0)
+        translate(0, 2, 0)
     if keys[pg.K_t] == True:  # T -> Move Up
-        translate(0, -0.5, 0)
+        translate(0, -2, 0)
 
     if keys[pg.K_i] == True:  # I -> Tilt Down
-        tilt(0.3)
+        tilt(0.5)
     if keys[pg.K_k] == True:  # K -> Tilt Up
-        tilt(-0.3)
+        tilt(-0.5)
     if keys[pg.K_j] == True:  # J -> Pan Left
-        pan(0.3)
+        pan(0.5)
     if keys[pg.K_l] == True:  # L -> Pan Right
-        pan(-0.3)
+        pan(-0.5)
     if keys[pg.K_u] == True:  # U -> Roll Left
-        roll(-0.3)
+        roll(-0.5)
     if keys[pg.K_o] == True:  # O -> Roll Right
-        roll(0.3)
+        roll(0.5)
 
     if keys[pg.K_w] == True:  # W -> Zoom Out
         if z > 100:
-            z -= 0.5
+            z -= 2
     if keys[pg.K_r] == True:  # R -> Zoom In
         if z < 400:
-            z += 0.5
+            z += 2
 
     if keys[pg.K_m] == True and cooldown == 0:
         change_mode()
