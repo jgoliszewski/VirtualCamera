@@ -29,14 +29,15 @@ def change_mode():
     mode = not mode
 
 def init_cubes():
+    gap = 100
     cubes.append(create_cube(0, 0, 100, 50 , COLORS[0]))
-    cubes.append(create_cube(0, -75, 100, 50, COLORS[1]))
-    cubes.append(create_cube(-75, 0, 100, 50, COLORS[2]))
-    cubes.append(create_cube(-75, -75, 100, 50, COLORS[3]))
-    cubes.append(create_cube(0, 0, 175, 50, COLORS[4]))
-    cubes.append(create_cube(0, -75, 175, 50, COLORS[5]))
-    cubes.append(create_cube(-75, 0, 175, 50, COLORS[6]))
-    cubes.append(create_cube(-75, -75, 175, 50, COLORS[7]))
+    cubes.append(create_cube(0, -gap, 100, 50, COLORS[1]))
+    cubes.append(create_cube(-gap, 0, 100, 50, COLORS[2]))
+    cubes.append(create_cube(-gap, -gap, 100, 50, COLORS[3]))
+    cubes.append(create_cube(0, 0, 100+gap, 50, COLORS[4]))
+    cubes.append(create_cube(0, -gap, 100+gap, 50, COLORS[5]))
+    cubes.append(create_cube(-gap, 0, 100+gap, 50, COLORS[6]))
+    cubes.append(create_cube(-gap, -gap, 100+gap, 50, COLORS[7]))
 
 def create_cube(x, y, z, size, color):
     vertices = []
